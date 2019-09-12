@@ -11,14 +11,17 @@ const fs = require('fs');
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
-try {
-  await readFileAsync('/tmp/nodeup.lastblock');
-} catch (e) {
-  console.log('Initializing...please run this again after tempfile has been created');
-  await writeFileAsync('/tmp/nodeup.lastblock', 0);
-}
-
 const checkNode = async (nodeUrl) => {
+  //
+  // try to initialize on first run
+  //
+  try {
+    await readFileAsync('/tmp/nodeup.lastblock');
+  } catch (e) {
+    console.log('Initializing...');
+    await writeFileAsync('/tmp/nodeup.lastblock', 0);
+  }
+
   //
   // set a timeout manually, since ApiPromise won't let us do this
   // if the timeout is reached, kill the process with exitcode 1
