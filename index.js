@@ -11,6 +11,13 @@ const fs = require('fs');
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
+try {
+  await readFileAsync('/tmp/nodeup.lastblock');
+} catch (e) {
+  console.log('Initializing...please run this again after tempfile has been created');
+  await writeFileAsync('/tmp/nodeup.lastblock', 0);
+}
+
 const checkNode = async (nodeUrl) => {
   //
   // set a timeout manually, since ApiPromise won't let us do this
@@ -63,20 +70,16 @@ const checkNode = async (nodeUrl) => {
   console.log(bestBlock, 'is our best block, while',
               bestPeerBlock, 'is the best peer block');
   if (nPeersAhead > nPeers / 2) {
-    try {
-      const storage = await readFileAsync('/tmp/nodeup.lastblock');
-      const lastBlocknum = parseInt(storage.toString());
-      if (lastBlocknum === bestblock) {
-        console.log(nPeersAhead, 'of', nPeers, 'peers are ahead of us');
-        console.log('throwing an error since the best block has not updated recently');
+    const storage = await readFileAsync('/tmp/nodeup.lastblock');
+    const lastBlocknum = parseInt(storage.toString());
+    if (lastBlocknum === bestblock) {
+      console.log(nPeersAhead, 'of', nPeers, 'peers are ahead of us');
+      console.log('throwing an error since the best block has not updated recently');
         process.exit(1);
-      }
-    } catch (e) {
-      console.log('could not read /tmp/nodeup.lastblock, attempting to recreate');
     }
     await writeFileAsync('/tmp/nodeup.lastblock', bestBlock);
   }
   process.exit(0);
 };
 
-checkNode('ws://testnet1.edgewa.re:9944');
+checkNode('ws://localhost:9944');
