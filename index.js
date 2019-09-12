@@ -75,7 +75,7 @@ const checkNode = async (nodeUrl) => {
   if (nPeersAhead > nPeers / 2) {
     const storage = await readFileAsync('/tmp/nodeup.lastblock');
     const lastBlocknum = parseInt(storage.toString());
-    if (lastBlocknum === bestblock) {
+    if (lastBlocknum === bestBlock) {
       console.log(nPeersAhead, 'of', nPeers, 'peers are ahead of us');
       console.log('throwing an error since the best block has not updated recently');
         process.exit(1);
