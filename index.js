@@ -70,13 +70,12 @@ const checkNode = async (nodeUrl) => {
   // majority of peer nodes, we may be stalled and should exit with an
   // error
   //
-  console.log(bestBlock, 'is our best block, while',
-              bestPeerBlock, 'is the best peer block');
+  console.log(`${bestBlock} is our best block, ${bestPeerBlock} is the best peer block`);
   if (nPeersAhead > nPeers / 2) {
     const storage = await readFileAsync('/tmp/nodeup.lastblock');
     const lastBlocknum = parseInt(storage.toString());
     if (lastBlocknum === bestBlock) {
-      console.log(nPeersAhead, 'of', nPeers, 'peers are ahead of us');
+      console.log(`${nPeersAhead} of ${nPeers} peers are ahead of us`);
       console.log('throwing an error since the best block has not updated recently');
         process.exit(1);
     }
