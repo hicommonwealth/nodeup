@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { ApiPromise, WsProvider } = require('@polkadot/api');
+const { u128 } = require('@polkadot/types');
 const { IdentityTypes } = require('edgeware-node-types/dist/identity');
 const { SignalingTypes } = require('edgeware-node-types/dist/signaling');
 const { VotingTypes } = require('edgeware-node-types/dist/voting');
@@ -43,6 +44,7 @@ const checkNode = async (nodeUrl) => {
       ...IdentityTypes,
       ...SignalingTypes,
       ...VotingTypes,
+      Balance2: u128,
     },
   });
   console.log('Connected');
@@ -54,6 +56,8 @@ const checkNode = async (nodeUrl) => {
   const [peers, block, pendingExtrinsics, health] = await Promise.all([
     api.rpc.system.peers(),
     api.rpc.chain.getBlock(),
+    api.rpc.author.pendingExtrinsics(),
+    api.rpc.system.health(),
   ]);
   const bestBlock = +block.block.header.number;
   const bestPeerBlock = Math.max.apply(this, peers.toArray().map((p) => +p.bestNumber));
