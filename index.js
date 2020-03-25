@@ -62,6 +62,10 @@ const checkNode = async (nodeUrl) => {
   const bestBlock = +block.block.header.number;
   const bestPeerBlock = Math.max.apply(this, peers.toArray().map((p) => +p.bestNumber));
   const nPeers = peers.length;
+  // if we have no peers we should restart
+  if (nPeers === 0) {
+    process.exit(1)
+  }
   const nPeersAhead = peers.toArray()
         .map((p) => +p.bestNumber > bestBlock + 10)
         .filter((ahead) => ahead === true)
