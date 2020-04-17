@@ -75,6 +75,10 @@ const checkNode = async (nodeUrl) => {
   // error
   //
   console.log(`${bestBlock} is our best block, ${bestPeerBlock} is the best peer block`);
+  if (nPeers === 0) {
+    console.log('No peers, throwing an error');
+    process.exit(1);
+  }
   if (nPeersAhead > nPeers / 2) {
     const storage = await readFileAsync('/tmp/nodeup.lastblock');
     const lastBlocknum = parseInt(storage.toString());
