@@ -92,4 +92,10 @@ const checkNode = async (nodeUrl) => {
   process.exit(0);
 };
 
-checkNode('ws://localhost:9944');
+if (process.argv[2]) {
+  checkNode(process.argv[2]);
+} else {
+  console.log('Usage: node index.js ws://mainnet1.edgewa.re:9944');
+  console.log('No arguments specified, defaulting to local node');
+  checkNode('ws://localhost:9944');
+}
