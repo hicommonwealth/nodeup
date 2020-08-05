@@ -1,10 +1,8 @@
 #!/usr/bin/env node
-
+const { program, option } = require('commander');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { u128 } = require('@polkadot/types');
-const { IdentityTypes } = require('edgeware-node-types/dist/identity');
-const { SignalingTypes } = require('edgeware-node-types/dist/signaling');
-const { VotingTypes } = require('edgeware-node-types/dist/voting');
+const edgewareDefinitions = require('edgeware-node-types/interfaces/definitions');
 const { promisify } = require('util');
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
@@ -12,7 +10,34 @@ const fs = require('fs');
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
-const checkNode = async (nodeUrl) => {
+const edgTypes = Object
+  .values(edgewareDefinitions)
+  .reduce((res, { types }) => ({ ...res, ...types }), {});
+
+const mainnetTypes = {
+  ...edgTypes,
+  // aliases that don't do well as part of interfaces
+  'voting::VoteType': 'VoteType',
+  'voting::TallyType': 'TallyType',
+  'voting::Tally': 'VotingTally',
+  // chain-specific overrides
+  Address: 'GenericAddress',
+  Keys: 'SessionKeys4',
+  StakingLedger: 'StakingLedgerTo223',
+  Votes: 'VotesTo230',
+  ReferendumInfo: 'ReferendumInfoTo239',
+  Weight: 'u32'
+};
+
+const beresheetTypes = {
+  ...edgTypes,
+  // aliases that don't do well as part of interfaces
+  'voting::VoteType': 'VoteType',
+  'voting::TallyType': 'TallyType',
+  'voting::Tally': 'VotingTally',
+};
+
+const checkNode = async (nodeUrl, types) => {
   //
   // try to initialize on first run
   //
@@ -38,15 +63,7 @@ const checkNode = async (nodeUrl) => {
   //
   // initialize the api
   //
-  const api = await ApiPromise.create({
-    provider: new WsProvider(nodeUrl),
-    types: {
-      ...IdentityTypes,
-      ...SignalingTypes,
-      ...VotingTypes,
-      Balance2: u128,
-    },
-  });
+  const api = await ApiPromise.create({ provider: new WsProvider(nodeUrl), types });
   console.log('Connected');
   connected = true;
 
@@ -92,10 +109,24 @@ const checkNode = async (nodeUrl) => {
   process.exit(0);
 };
 
-if (process.argv[2]) {
-  checkNode(process.argv[2]);
-} else {
-  console.log('Usage: node index.js ws://mainnet1.edgewa.re:9944');
-  console.log('No arguments specified, defaulting to local node');
-  checkNode('ws://localhost:9944');
+program
+  .name('nodeup')
+  .option('-m, --mainnet', 'mainnet config')
+  .option('-b, --beresheet', 'beresheet config')
+  .option('-u, --url <url>', 'Url of node to connect to')
+  .parse(process.argv);
+
+const programOptions = program.opts();
+let url = 'ws://localhost:9944';
+if (programOptions.url) {
+  url = programOptions.url;
 }
+
+if (programOptions.mainnet) {
+  checkNode(url, mainnetTypes);
+}
+
+if (programOptions.beresheet) {
+  checkNode(url, beresheetTypes);
+}
+
