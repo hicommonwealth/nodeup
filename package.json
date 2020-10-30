@@ -10,11 +10,11 @@
   },
   "keywords": [],
   "dependencies": {
-    "@polkadot/api": "^1.27.1",
-    "@polkadot/util": "^3.0.1",
-    "@polkadot/util-crypto": "^3.0.1",
+    "@polkadot/api": "^2.0.1",
+    "@polkadot/util": "^3.5.1",
+    "@polkadot/util-crypto": "^3.5.1",
     "commander": "^6.0.0",
-    "edgeware-node-types": "^2.3.4",
+    "@edgeware/node-types": "3.0.3",
     "uuid": "^3.4.0"
   }
 }

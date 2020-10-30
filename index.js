@@ -2,7 +2,7 @@
 const { program, option } = require('commander');
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { u128 } = require('@polkadot/types');
-const edgewareDefinitions = require('edgeware-node-types/interfaces/definitions');
+const edgewareDefinitions = require('@edgeware/node-types');
 const { promisify } = require('util');
 const uuidv4 = require('uuid/v4');
 const fs = require('fs');
@@ -45,7 +45,7 @@ const checkNode = async (nodeUrl, types) => {
     await readFileAsync('/tmp/nodeup.lastblock');
   } catch (e) {
     console.log('Initializing...');
-    await writeFileAsync('/tmp/nodeup.lastblock', 0);
+    await writeFileAsync('/tmp/nodeup.lastblock', (0).toString());
   }
 
   //
@@ -123,11 +123,10 @@ if (programOptions.url) {
   url = programOptions.url;
 }
 
-if (programOptions.mainnet) {
+if (programOptions.beresheet) {
+  console.log(`Checking beresheet node at ${url}`);
+  checkNode(url, beresheetTypes);
+} else {
+  console.log(`Checking mainnet node at ${url}`);
   checkNode(url, mainnetTypes);
 }
-
-if (programOptions.beresheet) {
-  checkNode(url, beresheetTypes);
-}
-
