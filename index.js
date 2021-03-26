@@ -118,7 +118,7 @@ program
   .parse(process.argv);
 
 const programOptions = program.opts();
-let url = 'ws://localhost:9944';
+let url = 'wss://mainnet2.edgewa.re';
 if (programOptions.url) {
   url = programOptions.url;
 }
