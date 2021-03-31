@@ -14,7 +14,7 @@
     "@polkadot/util": "^5.4.4",
     "@polkadot/util-crypto": "^5.4.4",
     "commander": "^6.0.0",
-    "@edgeware/node-types": "3.3.2-tokyo.0",
+    "@edgeware/node-types": "3.3.3",
     "uuid": "^3.4.0"
   }
 }

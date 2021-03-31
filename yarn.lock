@@ -9,10 +9,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@edgeware/node-types@3.3.2-tokyo.0":
-  version "3.3.2-tokyo.0"
-  resolved "https://registry.yarnpkg.com/@edgeware/node-types/-/node-types-3.3.2-tokyo.0.tgz#136dfee67ae448613b91f871db8051b87cea43d9"
-  integrity sha512-RbyajTgF5v6zCwQYIqzl0NVHxIZxSD5Mit8H2GVvnMpk9VshCbQQGoeDiTA1djWi2kGTWnhBi0zqZkpha/wyKw==
+"@edgeware/node-types@3.3.3":
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@edgeware/node-types/-/node-types-3.3.3.tgz#0a1f11698203c8056722e4c1b218f04f6eec55ed"
+  integrity sha512-RDdTjLRZD36MOQGA9g1MXvJpogg08J/0PwJXCEe8tZGlwoHXHw0PT8ieIQMTe2DCKegafHtDYufX36iePngzng==
 
 "@polkadot/api-derive@3.11.1":
   version "3.11.1"
