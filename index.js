@@ -46,43 +46,41 @@ const checkNode = async (nodeUrl, types) => {
   //
   // get relevant chain data
   //
-  const [block, pendingExtrinsics, health] = await Promise.all([
+  const [block, health, peers] = await Promise.all([
     api.rpc.chain.getBlock(),
-    api.rpc.author.pendingExtrinsics(),
     api.rpc.system.health(),
+    api.rpc.system.peers(),
   ]);
   const nPeers = health.peers.toNumber();
-  // const bestBlock = +block.block.header.number;
+  const bestBlock = +block.block.header.number;
   // if we have no peers we should restart
   if (nPeers === 0) {
     process.exit(1)
   }
-  console.log(nPeers);
-  // TODO: fix  broken peer request
-  // const nPeersAhead = peers.toArray()
-  //       .map((p) => +p.bestNumber > bestBlock + 10)
-  //       .filter((ahead) => ahead === true)
-  //       .length;
+  console.log(`${nPeers} peers connected`);
 
-  //
-  // try to read the last blocknum from a temporary file
+  // Calculate the number of peers more then 10 blocks ahead
+  const nPeersAhead = peers.toArray()
+         .map((p) => +p.bestNumber > bestBlock + 10)
+         .filter((ahead) => ahead === true)
+         .length;
+
   //
   // if it hasn't changed since the last run, and we are behind the
   // majority of peer nodes, we may be stalled and should exit with an
   // error
   //
-  // TODO: fix broken peer request
-  // console.log(`${bestBlock} is our best block`);
-  // if (nPeersAhead > nPeers / 2) {
-  //   const storage = await readFileAsync('/tmp/nodeup.lastblock');
-  //   const lastBlocknum = parseInt(storage.toString());
-  //   if (lastBlocknum === bestBlock) {
-  //     console.log(`${nPeersAhead} of ${nPeers} peers are ahead of us`);
-  //     console.log('throwing an error since the best block has not updated recently');
-  //       process.exit(1);
-  //   }
-  //   await writeFileAsync('/tmp/nodeup.lastblock', bestBlock);
-  // }
+  console.log(`${bestBlock} is our best block`);
+  if (nPeersAhead > nPeers / 2) {
+    const storage = await readFileAsync('/tmp/nodeup.lastblock');
+    const lastBlocknum = parseInt(storage.toString());
+    if (lastBlocknum === bestBlock) {
+      console.log(`${nPeersAhead} of ${nPeers} peers are ahead of us`);
+      console.log('throwing an error since the best block has not updated recently');
+        process.exit(1);
+    }
+    await writeFileAsync('/tmp/nodeup.lastblock', bestBlock);
+  }
   process.exit(0);
 };
 
